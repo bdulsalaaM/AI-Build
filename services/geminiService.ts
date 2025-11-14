@@ -1,6 +1,5 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
-import { BookingDetails, ServiceType, RideOption, CourierQuote } from '../types';
+import { BookingDetails, ServiceType, RideOption, CourierQuote, DriverDetails } from '../types';
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
@@ -69,4 +68,18 @@ export const generateRideAndCourierOptions = async (details: BookingDetails): Pr
     console.error("Error generating options with Gemini:", error);
     throw new Error("Failed to get options. Please try again.");
   }
+};
+
+// Placeholder driver data
+const drivers: DriverDetails[] = [
+  { name: 'Bayo Adekunle', photoUrl: 'https://i.pravatar.cc/150?u=bayo', vehicle: 'Toyota Camry (2018)', licensePlate: 'LSD 123AB' },
+  { name: 'Chioma Okoro', photoUrl: 'https://i.pravatar.cc/150?u=chioma', vehicle: 'Honda Accord (2020)', licensePlate: 'ABC 456JA' },
+  { name: 'Musa Ibrahim', photoUrl: 'https://i.pravatar.cc/150?u=musa', vehicle: 'Kia Rio (2019)', licensePlate: 'KJA 789BC' },
+];
+
+export const fetchDriverDetails = async (): Promise<DriverDetails> => {
+  // Simulate network delay
+  await new Promise(resolve => setTimeout(resolve, 1500));
+  // Return a random driver from the list
+  return drivers[Math.floor(Math.random() * drivers.length)];
 };

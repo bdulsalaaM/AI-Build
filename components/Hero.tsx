@@ -26,7 +26,7 @@ const Hero: React.FC<HeroProps> = ({ onSearch, setIsLoading, setResults, isShowi
             The reliable, safe, and lightning-fast way to move around and send packages within Nigeria. Let's get you going.
           </p>
         </div>
-        <div className={`mt-12 max-w-lg mx-auto transition-opacity duration-500 ${isShowingResults ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'}`}>
+        <div className={`mt-12 max-w-lg mx-auto transition-opacity duration-500 ${isShowingResults ? 'opacity-0 h-0 invisible' : 'opacity-100'}`}>
             <BookingForm onSearch={onSearch} setIsLoading={setIsLoading} setResults={setResults} />
         </div>
       </div>

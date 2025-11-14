@@ -1,4 +1,3 @@
-
 export enum ServiceType {
   Ride = 'ride',
   Courier = 'courier',
@@ -24,4 +23,21 @@ export interface BookingDetails {
   pickup: string;
   dropoff: string;
   packageDetails?: string;
+}
+
+export interface DriverDetails {
+  name: string;
+  photoUrl: string;
+  vehicle: string;
+  licensePlate: string;
+}
+
+export interface User {
+  name: string;
+  email: string;
+  role: 'user' | 'driver';
+  driverDetails?: {
+    vehicle: string;
+    licensePlate: string;
+  }
 }
