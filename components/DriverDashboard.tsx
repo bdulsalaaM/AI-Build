@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { User, RideRequest, PayoutDetails } from '../types';
-import { generateMockRideRequest } from '../services/geminiService';
+import { generateMockRideRequest } from '../functions/api';
 import PayoutsModal from './PayoutsModal';
 import MapView from './MapView';
 import VehicleModal from './VehicleModal';

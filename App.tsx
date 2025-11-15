@@ -7,7 +7,7 @@ import { BookingDetails, RideOption, CourierQuote, DriverDetails, User, RideHist
 import ResultsDisplay from './components/ResultsDisplay';
 import ConfirmationModal from './components/ConfirmationModal';
 import ActiveRideDisplay from './components/ActiveRideDisplay';
-import { fetchDriverDetails } from './services/geminiService';
+import { fetchDriverDetails } from './functions/api';
 import AuthModal from './components/AuthModal';
 import RideHistoryModal from './components/RideHistoryModal';
 import ActiveCourierDisplay from './components/ActiveCourierDisplay';

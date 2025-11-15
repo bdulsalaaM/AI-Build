@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { ServiceType, BookingDetails, RideOption, CourierQuote } from '../types';
-import { generateRideAndCourierOptions } from '../services/geminiService';
+import { generateRideAndCourierOptions } from '../functions/api';
 
 interface LocationPinIconProps {
   className?: string;
