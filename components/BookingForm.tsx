@@ -40,6 +40,11 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSearch, setIsLoading, setRe
   const [packageDetails, setPackageDetails] = useState('');
   const [error, setError] = useState<string | null>(null);
 
+  // Scheduling state
+  const [isScheduling, setIsScheduling] = useState(false);
+  const [scheduledDate, setScheduledDate] = useState('');
+  const [scheduledTime, setScheduledTime] = useState('');
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -47,8 +52,19 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSearch, setIsLoading, setRe
       setError('Please fill in all required fields.');
       return;
     }
+    if (isRide && isScheduling && (!scheduledDate || !scheduledTime)) {
+      setError('Please select a date and time for your scheduled ride.');
+      return;
+    }
 
-    const bookingDetails: BookingDetails = { service, pickup, dropoff, packageDetails };
+    const bookingDetails: BookingDetails = { 
+      service, 
+      pickup, 
+      dropoff, 
+      packageDetails,
+      scheduledDate: isRide && isScheduling ? scheduledDate : undefined,
+      scheduledTime: isRide && isScheduling ? scheduledTime : undefined,
+    };
     onSearch(bookingDetails);
     setIsLoading(true);
 
@@ -116,6 +132,37 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSearch, setIsLoading, setRe
             />
           </div>
         </div>
+
+        {isRide && (
+          <div className="space-y-3">
+            <div className="flex items-center">
+              <input
+                id="scheduling"
+                name="scheduling"
+                type="checkbox"
+                checked={isScheduling}
+                onChange={(e) => setIsScheduling(e.target.checked)}
+                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+              />
+              <label htmlFor="scheduling" className="ml-2 block text-sm text-gray-900">
+                Schedule for later
+              </label>
+            </div>
+            {isScheduling && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-gray-50 rounded-md">
+                <div>
+                  <label htmlFor="date" className="block text-xs font-medium text-gray-700">Date</label>
+                  <input type="date" id="date" value={scheduledDate} onChange={e => setScheduledDate(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"/>
+                </div>
+                 <div>
+                  <label htmlFor="time" className="block text-xs font-medium text-gray-700">Time</label>
+                  <input type="time" id="time" value={scheduledTime} onChange={e => setScheduledTime(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"/>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {!isRide && (
           <div>
             <label htmlFor="package" className="sr-only">Package Details</label>
@@ -140,7 +187,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSearch, setIsLoading, setRe
           type="submit"
           className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-dark"
         >
-          {isRide ? 'Find a Ride' : 'Get Quote'}
+          {isRide ? (isScheduling ? 'Schedule Ride' : 'Find a Ride') : 'Get Quote'}
         </button>
       </form>
     </div>

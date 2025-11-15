@@ -1,5 +1,5 @@
 import { GoogleGenAI, Type } from "@google/genai";
-import { BookingDetails, ServiceType, RideOption, CourierQuote, DriverDetails } from '../types';
+import { BookingDetails, ServiceType, RideOption, CourierQuote, DriverDetails, RideRequest } from '../types';
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
@@ -10,7 +10,7 @@ const rideSchema = {
     properties: {
       type: { type: Type.STRING, description: "Type of ride (e.g., 'Economy', 'Keke', 'Comfort')" },
       fare: { type: Type.STRING, description: "Estimated fare in Nigerian Naira (e.g., '₦2500 - ₦3000')" },
-      eta: { type: Type.STRING, description: "Estimated time of arrival for the ride in minutes (e.g., '5 mins')" },
+      eta: { type: Type.STRING, description: "Estimated time of arrival for the ride in minutes (e.g., '5 mins'). For scheduled rides, this can represent driver availability." },
       description: { type: Type.STRING, description: "A brief, appealing description of the ride type." },
       icon: { type: Type.STRING, description: "An icon identifier from this list: 'car', 'bike', 'luxury'" }
     },
@@ -39,7 +39,10 @@ export const generateRideAndCourierOptions = async (details: BookingDetails): Pr
     let schema: object;
 
     if (isRide) {
-      prompt = `A user in Nigeria wants to book a ride from "${details.pickup}" to "${details.dropoff}". Provide 3 distinct ride options for them. Include 'Keke' as one of the options if the distance seems short or within a city.`;
+      const scheduleInfo = details.scheduledDate && details.scheduledTime 
+        ? ` for a scheduled pickup on ${details.scheduledDate} at ${details.scheduledTime}` 
+        : '';
+      prompt = `A user in Nigeria wants to book a ride${scheduleInfo} from "${details.pickup}" to "${details.dropoff}". Provide 3 distinct ride options for them. Include 'Keke' as one of the options if the distance seems short or within a city.`;
       schema = rideSchema;
     } else {
       prompt = `A user in Nigeria wants to send a package from "${details.pickup}" to "${details.dropoff}". The package is: "${details.packageDetails}". Provide a courier quote.`;
@@ -82,4 +85,26 @@ export const fetchDriverDetails = async (): Promise<DriverDetails> => {
   await new Promise(resolve => setTimeout(resolve, 1500));
   // Return a random driver from the list
   return drivers[Math.floor(Math.random() * drivers.length)];
+};
+
+// --- Mock Ride Request Generator for Driver Dashboard ---
+const mockLocations = ['Ikeja City Mall', 'Lekki Phase 1 Gate', 'National Stadium, Surulere', 'Yaba Market', 'Eko Hotel, Victoria Island', 'Murtala Muhammed Airport', 'University of Lagos'];
+const mockFares = ['₦2500', '₦3000', '₦1800', '₦4500', '₦5000', '₦2200', '₦3800'];
+
+export const generateMockRideRequest = (): RideRequest => {
+  const pickup = mockLocations[Math.floor(Math.random() * mockLocations.length)];
+  let dropoff = mockLocations[Math.floor(Math.random() * mockLocations.length)];
+  
+  // Ensure pickup and dropoff are not the same
+  while (pickup === dropoff) {
+    dropoff = mockLocations[Math.floor(Math.random() * mockLocations.length)];
+  }
+
+  return {
+    id: `req_${new Date().getTime()}_${Math.floor(Math.random() * 1000)}`,
+    pickup,
+    dropoff,
+    fare: mockFares[Math.floor(Math.random() * mockFares.length)],
+    expiresAt: Date.now() + 30000 // Expires in 30 seconds
+  };
 };

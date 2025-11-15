@@ -33,6 +33,12 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ isOpen, onClose, 
             <p className="text-sm font-medium text-gray-500">To</p>
             <p className="font-semibold text-gray-800">{bookingDetails.dropoff}</p>
           </div>
+          {bookingDetails.scheduledDate && bookingDetails.scheduledTime && (
+             <div>
+                <p className="text-sm font-medium text-gray-500">Scheduled for</p>
+                <p className="font-semibold text-primary">{new Date(bookingDetails.scheduledDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} at {bookingDetails.scheduledTime}</p>
+            </div>
+          )}
           <div className="border-t pt-4">
             {isRide && rideOption && (
               <>

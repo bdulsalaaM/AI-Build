@@ -39,7 +39,7 @@ interface ActiveRideDisplayProps {
     bookingDetails: BookingDetails;
     driverDetails: DriverDetails | null;
     isFetchingDriver: boolean;
-    onEndRide: () => void;
+    onEndRide: (rating: number, comments: string) => void;
 }
 
 const ActiveRideDisplay: React.FC<ActiveRideDisplayProps> = ({ ride, bookingDetails, driverDetails, isFetchingDriver, onEndRide }) => {
@@ -47,6 +47,7 @@ const ActiveRideDisplay: React.FC<ActiveRideDisplayProps> = ({ ride, bookingDeta
     const [rideStatus, setRideStatus] = useState<RideStatus>('in_progress');
     const [rating, setRating] = useState(0);
     const [hoverRating, setHoverRating] = useState(0);
+    const [comments, setComments] = useState('');
 
     const [currentEtaMins, setCurrentEtaMins] = useState<number>(() => {
         const match = ride.eta.match(/\d+/);
@@ -70,10 +71,15 @@ const ActiveRideDisplay: React.FC<ActiveRideDisplayProps> = ({ ride, bookingDeta
     }
 
     const handleRatingSubmit = () => {
-        console.log(`Rating submitted: ${rating} stars`);
         setRideStatus('completed');
-        setTimeout(() => onEndRide(), 1000); // Show thank you message then reset
+        setTimeout(() => onEndRide(rating, comments), 1000); // Show thank you message then reset
     };
+    
+    const handleSkip = () => {
+        setRideStatus('completed');
+        setTimeout(() => onEndRide(0, ''), 1000);
+    }
+
 
     const renderInProgress = () => (
         <>
@@ -123,7 +129,7 @@ const ActiveRideDisplay: React.FC<ActiveRideDisplayProps> = ({ ride, bookingDeta
                     <p className="font-semibold text-gray-700">Rate your driver, {driverDetails.name}</p>
                 </div>
             )}
-            <div className="flex justify-center my-6 space-x-2">
+            <div className="flex justify-center my-4 space-x-2">
                 {[1, 2, 3, 4, 5].map((star) => (
                     <button
                         key={star}
@@ -136,8 +142,19 @@ const ActiveRideDisplay: React.FC<ActiveRideDisplayProps> = ({ ride, bookingDeta
                     </button>
                 ))}
             </div>
-            <div className="grid grid-cols-2 gap-3 mt-8">
-                <button onClick={onEndRide} className="w-full flex justify-center py-3 px-4 border border-gray-300 rounded-md shadow-sm text-base font-medium text-gray-700 bg-white hover:bg-gray-50">
+             <div className="my-4">
+                <label htmlFor="comments" className="sr-only">Comments</label>
+                <textarea
+                    id="comments"
+                    value={comments}
+                    onChange={(e) => setComments(e.target.value)}
+                    rows={3}
+                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                    placeholder="Add comments (optional)..."
+                ></textarea>
+            </div>
+            <div className="grid grid-cols-2 gap-3 mt-6">
+                <button onClick={handleSkip} className="w-full flex justify-center py-3 px-4 border border-gray-300 rounded-md shadow-sm text-base font-medium text-gray-700 bg-white hover:bg-gray-50">
                     Skip
                 </button>
                 <button onClick={handleRatingSubmit} disabled={rating === 0} className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-primary hover:bg-primary-dark disabled:bg-gray-400 disabled:cursor-not-allowed">

@@ -19,7 +19,9 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSuccess }
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [phone, setPhone] = useState('');
-  const [vehicle, setVehicle] = useState('');
+  const [vehicleMake, setVehicleMake] = useState('');
+  const [vehicleModel, setVehicleModel] = useState('');
+  const [vehicleYear, setVehicleYear] = useState('');
   const [licensePlate, setLicensePlate] = useState('');
   const [error, setError] = useState('');
 
@@ -38,17 +40,17 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSuccess }
       setError('Email and password are required.');
       return;
     }
-    if (mode === 'signup' && role === 'driver' && (!vehicle || !licensePlate)) {
-        setError('Vehicle details are required for drivers.');
+    if (mode === 'signup' && role === 'driver' && (!vehicleMake || !vehicleModel || !vehicleYear || !licensePlate)) {
+        setError('All vehicle details are required for drivers.');
         return;
     }
 
     // Simulate successful auth
     const user: User = {
-      name: name || 'Demo User', // Use a placeholder for signin
+      name: name || 'Demo Driver', // Use a placeholder for signin
       email,
       role,
-      driverDetails: role === 'driver' ? { vehicle, licensePlate } : undefined
+      driverDetails: role === 'driver' ? { vehicleMake, vehicleModel, vehicleYear, licensePlate } : undefined
     };
     onLoginSuccess(user);
   };
@@ -90,7 +92,9 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSuccess }
             {isSignUp && role === 'driver' && (
               <div className="p-4 bg-gray-50 rounded-md space-y-3">
                  <p className="text-sm font-medium text-gray-600">Driver Details</p>
-                 <input type="text" value={vehicle} onChange={e => setVehicle(e.target.value)} placeholder="Vehicle (e.g., Toyota Camry 2018)" className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-3 px-4"/>
+                 <input type="text" value={vehicleMake} onChange={e => setVehicleMake(e.target.value)} placeholder="Vehicle Make (e.g., Toyota)" className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-3 px-4"/>
+                 <input type="text" value={vehicleModel} onChange={e => setVehicleModel(e.target.value)} placeholder="Vehicle Model (e.g., Camry)" className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-3 px-4"/>
+                 <input type="text" value={vehicleYear} onChange={e => setVehicleYear(e.target.value)} placeholder="Vehicle Year (e.g., 2018)" className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-3 px-4"/>
                  <input type="text" value={licensePlate} onChange={e => setLicensePlate(e.target.value)} placeholder="License Plate (e.g., LSD 123AB)" className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-3 px-4"/>
               </div>
             )}
